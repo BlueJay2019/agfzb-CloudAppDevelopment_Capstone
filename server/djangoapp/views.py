@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
+from django.urls import reverse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
@@ -30,19 +31,19 @@ def contact(request):
 def login_request(request):
     context = {}
     # Handles POST request
-    status = 200
     if request.method == "POST":
         username = request.POST['username']
         password = request.POST['psw']
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
+            return redirect('djangoapp:index')
         else:
-            status=401
+            context['message'] = "Invalid username or password."
+            return render(request, 'djangoapp/index.html', context)
     else:
-        status=400
-    
-    return redirect('djangoapp:index')
+        context['message'] = "Invalid method"
+        return render(request, 'djangoapp/index.html', context)
 
 # Create a `logout_request` view to handle sign out request
 def logout_request(request):

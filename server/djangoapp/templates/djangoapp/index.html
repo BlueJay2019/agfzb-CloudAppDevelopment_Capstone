@@ -15,6 +15,11 @@
 
     <body>
     <!-- Remove this line the first time you edit this file -->
+    {% if message is not None %}
+        <script>
+            alert(`{{message}}`);
+        </script>
+    {% endif %}
      <!--Add a nav bar here -->
      <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
