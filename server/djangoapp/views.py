@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-# from .models import related models
-# from .restapis import related methods
+from .models import CarDealer
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -90,6 +90,29 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
+        url = "https://us-east.functions.appdomain.cloud/api/v1/web/dc39df14-a934-4f07-b1c4-720b0a8ffcf4/dealership-package/get-dealership.json"
+        # Get dealers from the URL
+
+        """
+        dealerId = request.GET.get('dealerId')
+        state = request.GET.get('state')
+        if dealerId is not None:
+            dealerships = get_dealers_from_cf(url, dealerId)
+        elif state is not None:
+            dealerships = get_dealers_from_cf(url, state)
+        else:
+            dealerships = get_dealers_from_cf(url)
+        """
+
+        dealer_list = get_dealers_from_cf(url)
+
+        # Concat all dealer's short name
+        dealer_names = ' '.join([dealer.short_name for dealer in dealer_list])
+        # Return a list of dealer short name
+        print(dealer_names)
+        context['dealer_names'] = dealer_names
+        context['dealer_list'] = dealer_list
+        
         return render(request, 'djangoapp/index.html', context)
 
     return render(request, 'djangoapp/index.html', status = 400)
@@ -97,10 +120,32 @@ def get_dealerships(request):
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    context = {}
+    if request.method == "GET":
+        url = "https://us-east.functions.appdomain.cloud/api/v1/web/dc39df14-a934-4f07-b1c4-720b0a8ffcf4/dealership-package/get-review.json"
+        # Get dealers from the URL
+        
+        """
+        dealerId = request.GET.get('dealerId')
+        state = request.GET.get('state')
+        if dealerId is not None:
+            dealerships = get_dealers_from_cf(url, dealerId)
+        elif state is not None:
+            dealerships = get_dealers_from_cf(url, state)
+        else:
+            dealerships = get_dealers_from_cf(url)
+        """
+        review_list = get_dealer_reviews_from_cf(url, dealer_id)
+
+        context['review_list'] = review_list
+        
+        return render(request, 'djangoapp/dealer_details.html', context)
+
+    return render(request, 'djangoapp/dealer_details.html', status = 400)
+
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    pass
 

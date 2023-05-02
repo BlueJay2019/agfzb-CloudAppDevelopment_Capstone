@@ -50,8 +50,38 @@
             </ul>
         </div>
     </nav>
-    <!--Add a dealer table here -->
+    <div class="container">
+        <h1>Dealer List</h1>
+        
+        <!--Add a dealer table here -->
+        {%if dealer_list is not None %}
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Dealer name</th>
+                        <th>City</th>
+                        <th>Address</th>
+                        <th>Zip</th>
+                        <th>State</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dealer in dealer_list %}
+                        <tr>
+                            <td>{{dealer.id}}</td>
+                            <td>{{dealer.full_name}}</td>
+                            <td>{{dealer.city}}</td>
+                            <td>{{dealer.address}}</td>
+                            <td>{{dealer.zip}}</td>
+                            <td>{{dealer.st}}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
 
+            </table>
+        {% endif %}
+    </div>
     </body>
 
 </html>
