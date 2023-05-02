@@ -10,9 +10,61 @@
     <body>
 
     <!--Add a nav bar here -->
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Home</a>
+                <a class="navbar-brand" href="about"">About Us</a>
+                <a class="navbar-brand" href="contact"">Contact Us</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                {% if user.is_authenticated %}
+                <li>
+                    <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
+                    <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li>
+                    <form class="form-inline" action="{% url 'djangoapp:login' %}" method="post">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Username" name="username" >
+                            <input type="password" class="form-control" placeholder="Password" name="psw" >
+                            <button class="btn btn-primary" type="submit">Login</button>
+                            <a class="btn btn-link" href="{% url 'djangoapp:registration' %}">Sign Up</a>
+                        </div>
+                    </form>
+                </li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
 
     <!-- Add reviews as cards -->
-
+    <div class="container">
+        <div class="row">
+        {% if review_list is not None%}
+        <div class="card-deck">
+            {% for item in review_list %}
+            <div class="card" style="width: 36rem;">
+                <div class="card-body bg-light">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                  <p class="card-text">{{ item.review}}</p>
+                  <p class="card-text">{{ item.sentiment}}</p>
+                </div>
+              </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+        </div>
+        <div class="row">
+            <form action="" method="post">
+                {% csrf_token %}
+                <input class="btn btn-primary"  type="submit"
+                       value="Submit Review">
+          </form>
+        </div>
+    </div>
     </body>
 
 </html>
