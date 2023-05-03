@@ -3,8 +3,8 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import CarDealer, DealerReview
-from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request
+from .models import CarDealer, DealerReview, CarModel
+from .restapis import get_dealers_from_cf, get_dealer_reviews_from_cf, post_request, get_dealer_name_by_id_from_cf
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
@@ -117,7 +117,8 @@ def get_dealer_details(request, id):
 
         #if len(review_list) == 0:
             #return get_dealerships(request) #redirect(request,'djangoapp:index')
-
+        context['dealer_id'] = id
+        context['dealer_name'] = get_dealer_name_by_id_from_cf(id)
         context['review_list'] = review_list
     
     return render(request, 'djangoapp/dealer_details.html', context)
@@ -126,20 +127,38 @@ def get_dealer_details(request, id):
 
 
 # Create a `add_review` view to submit a review
-def add_review(request, dealer_id):
+def add_review(request, id):
+    context = {}
+    context['dealer_id'] = id
+
     if request.method == "POST":
         url = "https://us-east.functions.appdomain.cloud/api/v1/web/dc39df14-a934-4f07-b1c4-720b0a8ffcf4/dealership-package/post-review.json"
-        context = {}
         review = {}
+
         json_payload = {}
-        review['name'] = request.user.username
+        review['name'] = request.user.first_name + ' ' + request.user.last_name
         review["time"] = datetime.utcnow().isoformat()
-        review["dealership"] = dealer_id
-        review["review"] = 'this is the test' #request.POST['review']
+        review["dealership"] = id
+        review["review"] = request.POST['review']
+        #review["purchase"]= request.POST['purchace']
+        checkbox_values = request.POST.getlist('purchase')
+        review["purchase"] = True if len(checkbox_values) > 0 else False
+        review["purchase_date"]= request.POST['purchase_date']
+        car_id = request.POST['car']
+        select_car = CarModel.objects.filter(dealer_id = id, id = car_id)
+        if select_car:
+            review["car_model"] = select_car[0].name
+            review["car_make"] = select_car[0].car_make.name
+            review["car_year"] = select_car[0].year
 
         json_payload["review"] = review
         result = post_request(url, json_payload)
 
-        return get_dealer_details(request, dealer_id)
+        return redirect("djangoapp:dealer_details", id=id)
+    else:
+        car_list = CarModel.objects.filter(dealer_id = id)
+
+        context['dealer_name'] = get_dealer_name_by_id_from_cf(id)
+        context['car_list'] = car_list
 
     return render(request, 'djangoapp/add_review.html', context)

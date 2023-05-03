@@ -11,6 +11,48 @@
 
 </head>
     <body>
+    {% include 'djangoapp/top_menu.html'%}
     <!--Add review form here -->
+
+    <div class="container">
+        <div class="row">
+            <h3>Add a review about {{dealer_name}} </h3>
+        </div>
+        <div class="row">
+            <form action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
+                  <div class="form-group"> <!--Style second div with .form-group class -->
+                    <label for="review"><b>Enter the review content</b></label>
+                    <textarea class="form-control" placeholder="Review" id="review" name="review" rows="2" minlength="10"  required></textarea>
+                  </div>
+                  <div class="form-group">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="1" id="purchase" name="purchase"  checked>
+                        <label class="form-check-label" for="purchase">
+                          Has purchased the car from {{dealer_name}}?
+                          <span styl="color:silver">(select purchased car information below if checked)</span>
+                        </label> 
+                      </div>
+                </div>
+                <div class="form-group">
+                    <label for="car"><b>Select your car (model-make-year)</b></label>
+                   <select name="car" id="car" class="form-select" required>
+                         {% for car in car_list %}
+                            <!-- <option style="min-width: 200px;" selected value={{car.id}}>{{car.name}}-{{car.car_make.name}}-{{ car.year|date:"Y" }}</option>-->
+                            <option style="min-width: 200px;" selected value={{car.id}}>{{car.name}}-{{car.car_make.name}}-{{ car.year}}</option>
+                         {% endfor %}
+                    </select>      
+                </div>     
+                <div class="form-group">         
+                    <label for="purchase_date"><b>Select your purchase date</b></label>
+                    <input class="date-own form-control" type="text" name="purchase_date" id="purchase_date" style="width:150px;" >
+                </div>
+                <div class="form-group">  
+                        {% csrf_token %}
+                    <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+            </div>
+        </form>
+        </div>
+    </div>
     </body>
 </html>

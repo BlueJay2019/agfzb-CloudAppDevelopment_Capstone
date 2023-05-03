@@ -35,6 +35,7 @@ class CarModel(models.Model):
         (WAGON, 'Wagon'),
         (MINIVAN, 'Mini Van')
     ]
+    #id = models.IntegerField(default=0) 
     car_make = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     name = models.CharField(max_length=10)
     dealer_id = models.IntegerField(default=0)
@@ -45,6 +46,7 @@ class CarModel(models.Model):
 
 # <HINT> Create a plain Python class `CarDealer` to hold dealer data
 class CarDealer:
+    """
     id = None
     city = None
     state = None
@@ -55,7 +57,7 @@ class CarDealer:
     long = None
     short_name = None
     full_name = None
-
+    """
     def __init__(self, address, city, full_name, id, lat, long, short_name, st, zip):
         # Dealer address
         self.address = address
@@ -81,6 +83,7 @@ class CarDealer:
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
 class DealerReview:
+    """
     id = None
     name = None
     dealership = None
@@ -90,7 +93,7 @@ class DealerReview:
     car_make = None
     car_model = None
     car_year = None
-
+    """
     def __init__(self, id, dealership, name, purchase, review, purchase_date, car_make, car_model, car_year, sentiment):
         self.dealership = dealership
         self.name = name
@@ -102,6 +105,6 @@ class DealerReview:
         self.car_year = car_year
         self.sentiment = sentiment
         self.id = id
-
+    
     def __str__(self):
         return "name: " + self.name

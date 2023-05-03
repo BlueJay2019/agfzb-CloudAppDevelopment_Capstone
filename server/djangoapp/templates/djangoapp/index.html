@@ -21,6 +21,7 @@
         </script>
     {% endif %}
      <!--Add a nav bar here -->
+     <!--
      <nav class="navbar navbar-light bg-light">
         <div class="container-fluid">
             <div class="navbar-header">
@@ -49,28 +50,31 @@
                 {% endif %}
             </ul>
         </div>
-    </nav>
+    </nav>-->
+    {% include 'djangoapp/top_menu.html'%}
     <div class="container">
-        <h1>Dealer List</h1>
-        
+        <div class="row">
+        <h3>Dealership List</h3>
+        </div>
         <!--Add a dealer table here -->
+        <div class="row">
         {%if dealer_list is not None %}
-            <table class="table">
-                <thead>
+            <table class="table" id="table" data-filter-control="true"> 
+                <thead data-filter-control="select">
                     <tr>
-                        <th>ID</th>
-                        <th>Dealer name</th>
-                        <th>City</th>
-                        <th>Address</th>
-                        <th>Zip</th>
-                        <th>State</th>
+                        <th data-field="id">ID</th>
+                        <th data-field="full_name">Dealer name</th>
+                        <th data-field="city">City</th>
+                        <th data-field="address">Address</th>
+                        <th data-field="zip">Zip</th>
+                        <th data-field="state" data-filter-control="select">State</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for dealer in dealer_list %}
                         <tr>
-                            <td><a href="{% url 'djangoapp:dealer_details' dealer.id  %}">{{dealer.id}}</a></td>
-                            <td>{{dealer.full_name}}</td>
+                            <td>{{dealer.id}}</td>
+                            <td><a href="{% url 'djangoapp:dealer_details' dealer.id  %}">{{dealer.full_name}}</a></td>
                             <td>{{dealer.city}}</td>
                             <td>{{dealer.address}}</td>
                             <td>{{dealer.zip}}</td>
@@ -81,7 +85,13 @@
 
             </table>
         {% endif %}
+        </div>
     </div>
     </body>
+    <script>
+        $(function() {
+          $('#table').bootstrapTable()
+        })
+      </script>
 
 </html>
